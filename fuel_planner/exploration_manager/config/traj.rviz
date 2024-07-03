@@ -819,7 +819,7 @@ Visualization Manager:
   Global Options:
     Background Color: 255; 253; 224
     Default Light: true
-    Fixed Frame: world
+    Fixed Frame: Drone_1/odom_local_ned
     Frame Rate: 30
   Name: root
   Tools:

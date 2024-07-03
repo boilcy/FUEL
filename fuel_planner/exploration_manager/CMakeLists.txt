@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(exploration_manager)
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_FLAGS "-std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
+#set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall")
 
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
@@ -22,6 +22,10 @@ find_package(catkin REQUIRED COMPONENTS
   lkh_tsp_solver
   plan_manage
   cv_bridge
+  airsim_ros_pkgs
+  mavros_msgs
+  tf
+  tf2
 )
 
 catkin_package(
@@ -39,7 +43,6 @@ include_directories(
   ${PCL_INCLUDE_DIRS}
 )
 
-
 add_executable(exploration_node
   src/exploration_node.cpp 
   src/fast_exploration_fsm.cpp
@@ -49,6 +52,11 @@ target_link_libraries(exploration_node
   ${catkin_LIBRARIES}
   # -ldw
   )
+
+add_executable(airsim_ctrl src/airsim_ctrl.cpp)
+target_link_libraries(airsim_ctrl
+  ${catkin_LIBRARIES}
+)
 
 # add_library(exploration_manager
 #   src/fast_exploration_manager.cpp

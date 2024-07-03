@@ -1,4 +1,5 @@
 <launch>
+  <arg name="resolution_"/>
   <arg name="map_size_x_"/>
   <arg name="map_size_y_"/>
   <arg name="map_size_z_"/>
@@ -26,12 +27,11 @@
   <!-- main node -->
   <node pkg="exploration_manager" name="exploration_node" type="exploration_node" output="screen">
     <remap from ="/odom_world" to="$(arg odometry_topic)"/>
-    <!--frame id""-->
     <remap from ="/map_ros/pose"   to = "$(arg sensor_pose_topic)"/> 
     <remap from ="/map_ros/depth" to = "$(arg depth_topic)"/>
     <remap from ="/map_ros/cloud" to="$(arg cloud_topic)"/>
 
-    <param name="sdf_map/resolution"      value="0.1" /> 
+    <param name="sdf_map/resolution"      value="$(arg resolution_)" /> 
     <param name="sdf_map/map_size_x"   value="$(arg map_size_x_)" /> 
     <param name="sdf_map/map_size_y"   value="$(arg map_size_y_)" /> 
     <param name="sdf_map/map_size_z"   value="$(arg map_size_z_)" /> 
@@ -66,7 +66,7 @@
     <param name="map_ros/depth_filter_maxdist"   value="5.0"/>
     <param name="map_ros/depth_filter_mindist"   value="0.2"/>
     <param name="map_ros/depth_filter_margin"    value="2"/>
-    <param name="map_ros/k_depth_scaling_factor" value="1000.0"/>
+    <param name="map_ros/k_depth_scaling_factor" value="2000.0"/>
     <param name="map_ros/skip_pixel" value="2"/>
     <param name="map_ros/esdf_slice_height" value="0.3"/>
     <param name="map_ros/visualization_truncate_height"   value="10.09"/>
@@ -74,7 +74,7 @@
     <param name="map_ros/show_occ_time"  value="false"/>
     <param name="map_ros/show_esdf_time" value="false"/>
     <param name="map_ros/show_all_map" value="true"/>
-    <param name="map_ros/frame_id"      value="world"/>
+    <param name="map_ros/frame_id"     value="world"/>
 
     <!-- Fsm -->
     <param name="fsm/thresh_replan1" value="0.5" type="double"/>
@@ -198,5 +198,23 @@
     <param name="bspline/limit_acc" value="$(arg max_acc)" type="double"/>
     <param name="bspline/limit_ratio" value="1.1" type="double"/>
   </node>
+  
+  
+  <!-- <node pkg="exploration_manager" name="airsim_ctrl" type="airsim_ctrl" output="screen">
+  </node> -->
 
+  <!--<node pkg="nodelet" type="nodelet" args="standalone so3_control/SO3ControlNodelet" name="so3_control" required="true" output="screen">
+    <remap from="~odom" to="$(arg odometry_topic)"/>
+    <remap from="~position_cmd" to="/planning/pos_cmd"/>
+    <remap from="~motors" to="motors"/>
+    <remap from="~corrections" to="corrections"/>
+    <remap from="~so3_cmd" to="so3_cmd"/>
+    <rosparam file="$(find so3_control)/config/gains_hummingbird.yaml"/>
+    <rosparam file="$(find so3_control)/config/corrections_hummingbird.yaml"/>
+    <param name="mass" value="0.74"/>
+    <param name="use_angle_corrections " value="false"/>
+    <param name="use_external_yaw "      value="false"/>
+    <param name="gains/rot/z" value="1.0"/>
+    <param name="gains/ang/z" value="0.1"/>
+  </node> -->
 </launch>

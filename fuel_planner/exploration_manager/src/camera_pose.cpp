@@ -1,0 +1,39 @@
+#include <ros/ros.h>
+#include <math.h>
+#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+ros::Publisher pub_pose;
+
+float degreeToRad(float degree){
+    float pi = 3.1415;
+    return (degree * (pi/180));
+}
+
+void cameraPoseCallback(const nav_msgs::Odometry::ConstPtr& data){
+    nav_msgs::Odometry odom_pose;
+    odom_pose = *data;
+    tf2::Quaternion q_orig, q_rot, q_new;
+    //Quaternion conversion
+    tf2::convert(odom_pose.pose.pose.orientation , q_orig);
+    q_rot.setRPY(degreeToRad(-90.0) , 0, degreeToRad(270.0));
+    q_new = q_rot*q_orig;
+    q_new.normalize();
+    tf2::convert(q_new, camera_pose.pose.orientation);
+    camera_pose.pose.position.x += 0.1;
+    pub_pose.publish(camera_pose);
+}
+
+int main(int argc, char** argv) {
+  ros::init(argc, argv, "camera_pose");
+  ros::NodeHandle nh;
+  ros::Subscriber mavros_sub;
+  mavros_sub = nh.subscribe<nav_msgs::Odometry>("/obs/odom", 1000,  cameraPoseCallback);
+
+  pub_pose  = nh.advertise<geometry_msgs::PoseStamped>("/camera_pose",1000);
+
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+    ros::waitForShutdown();
+  return 0;
+}
